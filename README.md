@@ -3,7 +3,7 @@ Invernadero inteligente hydrosense
 
 Archivo principal main.py
 
-Archivo paquete.py hace referencia a las funciones usadas para los elementos usados
+Archivo paquete.py hace referencia a las funciones usadas para los elementos utilizados
 
 Archivo hcsr04.py modulo importado de sensor de distancia
 
