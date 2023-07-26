@@ -8,16 +8,15 @@ import json
 import urequests
 
 # ----------------------------Variables globales ------------------------------------
+
 conver = 90.0
 conver2 = 180.0
 conver3 = 90.0
 tem = 0
 hum = 0
 distance = 0
-#api_key = "1fe91ac602ccc71425bf06c671c212ea"
-#city = "Soacha,co"
-#url = "https://api.openweathermap.org/data/2.5/weather?q=Soacha,co&appid=1fe91ac602ccc71425bf06c671c212ea"
-    #---------------------[CONECTAR WIFI]------------------
+
+#---------------------[CONECTAR WIFI]------------------
 def conectaWifi(red, password):
     global miRed
     miRed = network.WLAN(network.STA_IF)
@@ -43,8 +42,7 @@ def controlar_servo(servo_motor, angulo):
     elif angulo > 180:
         anguelo = 180
     duty = int(25 + angulo * 100 / 180)  # Ajustar los valores según el rango del servo
-    servo_motor.duty(duty)       
-        #url= "https://api.thingspeak.com/update?api_key=EZ40ZZRKPOGK4U9B"
+    servo_motor.duty(duty) 
 
 #-------------------------- Función para ejecutar en el primer hilo ----------------------------------
 def hilo1(semaforo):
@@ -70,9 +68,9 @@ def hilo1(semaforo):
         respuesta = urequests.get(url_api+"&field1="+str(tem)+"&field2="+str(hum))# para thingspeak
         respuesta.close ()
         time.sleep(10)
-# Enviar una notificación si la temperatura es alta
+# Enviar una notificación si la temperatura es alta ---------------------------------------
         if tem >= 25:
-            #url = "https://maker.ifttt.com/trigger/telegram/with/key/cWAlO2MkKkngRkS8fhiwoF5he3mTefuVGo1gXoABb3q?"
+            url = "https://maker.ifttt.com/trigger/telegram/with/key/cWAlO2MkKkngRkS8fhiwoF5he3mTefuVGo1gXoABb3q?"
             ledR.value(1)
             releA.value(1)
             try:
@@ -105,8 +103,8 @@ def hilo1(semaforo):
            ledv.value(0)
            sleep(4)
         
-
 #------------------- Función para ejecutar en el segundo hilo ---------------------------------
+
 def hilo2(semaforo):
     sensor_distancia = HCSR04(trigger_pin=19, echo_pin=4)
     servo_sg90 = PWM(Pin(21), freq=50)
@@ -121,7 +119,7 @@ def hilo2(semaforo):
     url_api = "https://api.thingspeak.com/update?api_key=EZ40ZZRKPOGK4U9B"
     url = "https://maker.ifttt.com/trigger/telegram/with/key/cWAlO2MkKkngRkS8fhiwoF5he3mTefuVGo1gXoABb3q?"
     while True:
-        # Medir la distancia con el sensor ultrasónico HC-SR04
+    # Medir la distancia con el sensor ultrasónico HC-SR04 -------------------------------------------
         global distance
         distance = sensor_distancia.distance_cm()
         print("Distancia: {} cm".format(distance))
@@ -130,10 +128,10 @@ def hilo2(semaforo):
         time.sleep(4)
         
         semaforo.acquire()
-        # Encender el LED si el nivel de agua es bajo
+        # Encender el LED si el nivel de agua es bajo ---------------------------------------------------
         if distance >= 55:
             ledN.value(1)
-            res = urequests.get(url+"&value1="+str(distance)+"&value2="+str("NivelBajo")) #Alerta a Telegram
+            res = urequests.get(url+"&value1="+str(distance)+"&value2="+str("NivelBajo")) # Alerta a Telegram
             print(res.status_code)
             print(res.json)
             print("Nivel bajo de agua")
@@ -142,7 +140,7 @@ def hilo2(semaforo):
             ledN.value(0)
             sleep(3)
 
-        # Medir la intensidad de luz con el sensor de luz
+        # Medir la intensidad de luz con el sensor de luz -.------------------------------------------
         lectura = sensor_luz.read_u16()
         intensidad = lectura * (100 / 65535)
         print("Intensidad: {:.2f} %".format(intensidad))
